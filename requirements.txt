@@ -8,7 +8,9 @@ django-cloudinary-storage==0.3.0
 django-dotenv==1.4.2
 djangorestframework==3.16.1
 git-filter-repo==2.47.0
+gunicorn==25.0.3
 idna==3.11
+packaging==26.0
 pillow==12.1.0
 psycopg==3.3.2
 psycopg-binary==3.3.2
