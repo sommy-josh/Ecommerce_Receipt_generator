@@ -33,5 +33,3 @@ Designed for scalability and deployment using PostgreSQL and Render.
 
 ---
 
-## 📂 Project Structure
-
