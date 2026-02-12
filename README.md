@@ -9,7 +9,7 @@ Designed for scalability and deployment using PostgreSQL and Render.
 
 ## 🚀 Features
 
-- Create and manage receipts
+- Create and manage receipts by storing them on cloudinary
 - Automatic total amount calculation
 - Email receipt notifications
 - PostgreSQL database integration
