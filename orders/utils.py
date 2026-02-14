@@ -23,7 +23,7 @@ def generate_receipt_pdf(order):
     width, height = A4
 
     # Title
-    c.setFont("Helvetica-Bold", 18)
+    c.setFont("Helvetica-Bold", 18) 
     c.drawString(50, height - 50, "Payment Receipt")
 
     # Body
