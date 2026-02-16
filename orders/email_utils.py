@@ -1,23 +1,28 @@
-from django.core.mail import send_mail
+import resend
 from django.conf import settings
 
-def send_receipt_email(user, receipt_url, order):
-    subject = f"Your Receipt for Order #{order.id}"
-    message =f"""
-Hi {user.first_name},
+resend.api_key = settings.RESEND_API_KEY
 
-Thank you for your payment. You can download your receipt here:
-
-{receipt_url}
-
-Best regards,
-Chisom Stores
-""" 
-    print(message)
-    send_mail(
-        subject=subject,
-        message=message,
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        recipient_list=[user.email],
-        fail_silently=False,
-    )
+def send_receipt_email(user_email, receipt_url, order):
+    """
+    Sends receipt email with a link to download PDF
+    """
+    response = resend.Emails.send({
+        "from": settings.DEFAULT_FROM_EMAIL, 
+        "to": [user_email],                   
+        "subject": f"Your Receipt for Order #{order.id}",
+        "html": f"""
+            <h2>Payment Successful 🎉</h2>
+            <p>Hi,</p>
+            <p>Your payment has been confirmed.</p>
+            <p><strong>Order ID:</strong> {order.id}</p>
+            <p><strong>Amount:</strong> ₦{order.total_amount}</p>
+            <br>
+            <a href="{receipt_url}" target="_blank">
+                Download Your Receipt
+            </a>
+            <br><br>
+            <p>Thank you for your purchase.</p>
+        """
+    })
+    return response
