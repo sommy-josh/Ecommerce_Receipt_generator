@@ -87,3 +87,11 @@ class RegisterSerializer(serializers.ModelSerializer):
             password=validated_data["password"],
         )
         return user
+
+
+class MessageSerializer(serializers.Serializer):
+    message = serializers.CharField()
+
+
+class ErrorSerializer(serializers.Serializer):
+    error = serializers.CharField()
