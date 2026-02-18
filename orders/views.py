@@ -6,34 +6,52 @@ from rest_framework import status
 from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
-from .models import Order,OrderItem
+from .models import Order,OrderItem,Receipt
+from .utils import generate_receipt_pdf
 from .serializers import OrderSerializer,RegisterSerializer,MessageSerializer,ErrorSerializer
-
-
-
-
+import cloudinary
+import cloudinary.uploader
 
 @extend_schema(
-    parameters=[
-        OpenApiParameter(
-            name="order_id",
-            type=OpenApiTypes.STR,
-            location=OpenApiParameter.PATH,
-            description="Unique order ID"
-        )
-    ],
+    tags=["Payments"],
     responses={200: MessageSerializer}
 )
 @api_view(['POST'])
 def confirm_payment(request, order_id):
+
     order = get_object_or_404(Order, order_id=order_id)
+
+    if order.is_paid:
+        return Response(
+            {"message": "Order already paid."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
     order.is_paid = True
     order.save()
 
-    return Response(
-        {"message": "Payment confirmed. Receipt generated."},
-        status=status.HTTP_200_OK
-    )
+    # 🔒 Create receipt safely
+    receipt, created = Receipt.objects.get_or_create(order=order)
+
+    if created:
+        # Generate PDF
+        pdf_path = generate_receipt_pdf(order)
+
+        # Upload to Cloudinary
+        upload_result = cloudinary.uploader.upload(
+            pdf_path,
+            resource_type="raw"
+        )
+
+        receipt.pdf_url = upload_result["secure_url"]
+        receipt.save()
+
+    return Response({
+        "message": "Payment confirmed. Receipt generated.",
+        "pdf_url": receipt.pdf_url
+    })
+
+
 
 
 @extend_schema(

@@ -1,4 +1,5 @@
 import os
+import cloudinary.uploader
 from django.conf import settings
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
@@ -7,8 +8,10 @@ from datetime import datetime
 
 def generate_receipt_pdf(order):
     """
-    Generates a receipt PDF and returns a URL that can be sent in email
+    Generates a receipt PDF, uploads to Cloudinary,
+    and returns the Cloudinary secure URL.
     """
+
     # Ensure receipts directory exists
     receipts_dir = os.path.join(settings.MEDIA_ROOT, "receipts")
     os.makedirs(receipts_dir, exist_ok=True)
@@ -37,5 +40,14 @@ def generate_receipt_pdf(order):
     c.showPage()
     c.save()
 
-    # Return URL
-    return f"{settings.MEDIA_URL}receipts/{filename}"
+    # 🔥 Upload to Cloudinary (IMPORTANT: resource_type="raw")
+    upload_result = cloudinary.uploader.upload(
+        file_path,
+        resource_type="raw"
+    )
+
+    # Optional: delete local file after upload
+    os.remove(file_path)
+
+    # Return Cloudinary URL
+    return upload_result.get("secure_url")
