@@ -13,7 +13,7 @@ def send_receipt_email(user_email, receipt_url, order):
         "subject": f"Your Receipt for Order #{order.id}",
         "html": f"""
             <h2>Payment Successful 🎉</h2>
-            <p>Hi {order.user.first_name} {order.user.last_name},</p>
+            <p>Hi {order.user.username},</p>
             <p>Your payment has been confirmed.</p>
             <p><strong>Order ID:</strong> {order.id}</p>
             <p><strong>Amount:</strong> ₦{order.total_amount}</p>
