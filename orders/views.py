@@ -30,7 +30,7 @@ def confirm_payment(request, order_id):
     order.is_paid = True
     order.save()
 
-    # 🔒 Create receipt safely
+    #  Create receipt safely
     receipt, created = Receipt.objects.get_or_create(order=order)
 
     if created:

@@ -40,7 +40,7 @@ def generate_receipt_pdf(order):
     c.showPage()
     c.save()
 
-    # 🔥 Upload to Cloudinary (IMPORTANT: resource_type="raw")
+    #  Upload to Cloudinary (IMPORTANT: resource_type="raw")
     upload_result = cloudinary.uploader.upload(
         file_path,
         resource_type="raw"
